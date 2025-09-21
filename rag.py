@@ -8,8 +8,7 @@ from groq import Groq
 load_dotenv()
 
 # ChromaDB setup
-VECTOR_DB_DIR = os.getenv("VECTOR_DB_DIR", "./vector_db")
-chroma_client = chromadb.PersistentClient(path=VECTOR_DB_DIR)
+chroma_client = chromadb.Client()  # In-memory client
 
 # Groq setup
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -56,6 +55,8 @@ def retrieve_top_chunks(domain: str, query: str, model_context: dict, top_k: int
         print("No documents retrieved")
 
     return docs
+
+# Rest of rag.py remains unchanged
 
 def call_groq_generate(domain: str, question: str, context_chunks: List[str], model_context: dict) -> Dict[str, Any]:
     api_key = os.getenv("GROQ_API_KEY")

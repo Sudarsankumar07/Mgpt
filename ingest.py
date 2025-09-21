@@ -7,7 +7,7 @@ from utils import extract_text_from_pdf, extract_text_from_docx, chunk_text
 
 def ingest_file(content: bytes, filename: str, domain: str, model_context: dict, reset_collection: bool = False) -> Tuple[str, int]:
     try:
-        client = chromadb.Client()  # Use in-memory client
+        client = chromadb.Client()  # In-memory client
         collection_name = f"{domain}_docs"
         print(f"Processing collection: {collection_name}")
 
