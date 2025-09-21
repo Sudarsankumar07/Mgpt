@@ -5,11 +5,9 @@ import chromadb
 import mcp
 from utils import extract_text_from_pdf, extract_text_from_docx, chunk_text
 
-VECTOR_DB_DIR = os.getenv("VECTOR_DB_DIR", "./vector_db")
-
 def ingest_file(content: bytes, filename: str, domain: str, model_context: dict, reset_collection: bool = False) -> Tuple[str, int]:
     try:
-        client = chromadb.PersistentClient(path=VECTOR_DB_DIR)
+        client = chromadb.Client()  # Use in-memory client
         collection_name = f"{domain}_docs"
         print(f"Processing collection: {collection_name}")
 
