@@ -7,18 +7,27 @@ from utils import extract_text_from_pdf, extract_text_from_docx, chunk_text
 
 VECTOR_DB_DIR = os.getenv("VECTOR_DB_DIR", "./vector_db")
 
-def ingest_file(content: bytes, filename: str, domain: str, model_context: dict) -> Tuple[str, int]:
+def ingest_file(content: bytes, filename: str, domain: str, model_context: dict, reset_collection: bool = False) -> Tuple[str, int]:
     try:
         client = chromadb.PersistentClient(path=VECTOR_DB_DIR)
         collection_name = f"{domain}_docs"
         print(f"Processing collection: {collection_name}")
 
-        if collection_name in [c.name for c in client.list_collections()]:
+        # Check existing collections
+        existing_collections = [c.name for c in client.list_collections()]
+        print(f"Existing collections: {existing_collections}")
+        if reset_collection and collection_name in existing_collections:
             print(f"Deleting existing collection: {collection_name}")
             client.delete_collection(name=collection_name)
-
-        print(f"Creating new collection: {collection_name}")
-        collection = client.create_collection(name=collection_name)
+            print(f"Creating new collection: {collection_name}")
+            collection = client.create_collection(name=collection_name)
+        elif collection_name in existing_collections:
+            print(f"Using existing collection: {collection_name}")
+            collection = client.get_collection(name=collection_name)
+        else:
+            print(f"Creating new collection: {collection_name}")
+            collection = client.create_collection(name=collection_name)
+        print(f"Collection ready: {collection_name}")
 
         if filename.lower().endswith('.pdf'):
             text = extract_text_from_pdf(content)
@@ -29,12 +38,11 @@ def ingest_file(content: bytes, filename: str, domain: str, model_context: dict)
         print(f"Extracted text length: {len(text)}")
 
         chunks = chunk_text(text, chunk_size=model_context.get("chunk_size", 500), overlap=0)
+        print(f"Created {len(chunks)} chunks")
         if not chunks:
             raise ValueError("No text extracted from file")
-        print(f"Created {len(chunks)} chunks")
 
         doc_id = str(uuid.uuid4())
-
         embeddings = mcp.encode_texts(domain, chunks, model_context)
         print(f"Generated embeddings: {len(embeddings)} vectors, dim={len(embeddings[0])}")
 
@@ -44,7 +52,11 @@ def ingest_file(content: bytes, filename: str, domain: str, model_context: dict)
             metadatas=[{"doc_id": doc_id, "filename": filename}] * len(chunks),
             ids=[f"{doc_id}_{i}" for i in range(len(chunks))]
         )
-        print(f"Added {len(chunks)} documents to collection")
+        print(f"Added {len(chunks)} documents to collection {collection_name}")
+
+        # Verify collection contents
+        collection_count = collection.count()
+        print(f"Collection {collection_name} now contains {collection_count} documents")
 
         return doc_id, len(chunks)
     except Exception as e:

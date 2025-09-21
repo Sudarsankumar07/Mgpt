@@ -15,17 +15,15 @@ class ModelContext:
         self.model_name = model_name
         self.model = None
         self.embedding_dim = None
-        self.max_tokens = 512
+        self.max_tokens = 2048  # Increased to 2048
         self.chunk_size = 500
-        self.groq_model = "mixtral-8x7b-32768"
+        self.groq_model = "openai/gpt-oss-20b"
         if domain == "legal":
-            self.max_tokens = 1024
             self.chunk_size = 400
-            self.groq_model = "mixtral-8x7b-32768"
+            self.groq_model = "openai/gpt-oss-20b"
         elif domain == "general":
-            self.max_tokens = 512
             self.chunk_size = 500
-            self.groq_model = "mixtral-8x7b-32768"
+            self.groq_model = "openai/gpt-oss-20b"
 
     def load_model(self):
         if self.model is None:
