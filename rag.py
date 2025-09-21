@@ -8,7 +8,7 @@ from groq import Groq
 load_dotenv()
 
 # ChromaDB setup
-chroma_client = chromadb.Client()  # In-memory client
+chroma_client = chromadb.Client()  # In-memory client, no SQLite
 
 # Groq setup
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -29,7 +29,6 @@ def retrieve_top_chunks(domain: str, query: str, model_context: dict, top_k: int
 
     try:
         collection = chroma_client.get_collection(collection_name)
-        # Verify collection contents
         collection_count = collection.count()
         print(f"Collection {collection_name} contains {collection_count} documents")
     except Exception as e:

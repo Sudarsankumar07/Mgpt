@@ -7,7 +7,7 @@ from utils import extract_text_from_pdf, extract_text_from_docx, chunk_text
 
 def ingest_file(content: bytes, filename: str, domain: str, model_context: dict, reset_collection: bool = False) -> Tuple[str, int]:
     try:
-        client = chromadb.Client()  # In-memory client
+        client = chromadb.Client()  # In-memory client, no SQLite
         collection_name = f"{domain}_docs"
         print(f"Processing collection: {collection_name}")
 
@@ -52,7 +52,6 @@ def ingest_file(content: bytes, filename: str, domain: str, model_context: dict,
         )
         print(f"Added {len(chunks)} documents to collection {collection_name}")
 
-        # Verify collection contents
         collection_count = collection.count()
         print(f"Collection {collection_name} now contains {collection_count} documents")
 
