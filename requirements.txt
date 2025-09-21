@@ -1,0 +1,14 @@
+streamlit
+python-dotenv
+sentence-transformers
+chromadb
+pypdf
+python-docx
+torch
+torchvision
+huggingface-hub
+requests
+nest-asyncio
+groq
+dotenv
+huggingface_hub[hf_xet]
