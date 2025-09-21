@@ -1,14 +1,19 @@
 import os
 from typing import Dict, Any, List
 import mcp
-import chromadb
+import streamlit as st
+from streamlit_chromadb_connection.chromadb_connection import ChromadbConnection
 from dotenv import load_dotenv
 from groq import Groq
 
 load_dotenv()
 
 # ChromaDB setup
-chroma_client = chromadb.Client()  # In-memory client, no SQLite
+configuration = {
+    "client_type": "Client"  # In-memory client, no SQLite
+}
+conn = st.connection("chromadb", type=ChromadbConnection, **configuration)
+chroma_client = conn._instance  # Get the underlying chromadb.Client
 
 # Groq setup
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")

@@ -1,13 +1,19 @@
 import os
 import uuid
 from typing import Tuple
-import chromadb
+import streamlit as st
+from streamlit_chromadb_connection.chromadb_connection import ChromadbConnection
 import mcp
 from utils import extract_text_from_pdf, extract_text_from_docx, chunk_text
 
 def ingest_file(content: bytes, filename: str, domain: str, model_context: dict, reset_collection: bool = False) -> Tuple[str, int]:
     try:
-        client = chromadb.Client()  # In-memory client, no SQLite
+        # Initialize ChromaDB connection with in-memory client
+        configuration = {
+            "client_type": "Client"  # In-memory client, no SQLite
+        }
+        conn = st.connection("chromadb", type=ChromadbConnection, **configuration)
+        client = conn._instance  # Get the underlying chromadb.Client
         collection_name = f"{domain}_docs"
         print(f"Processing collection: {collection_name}")
 
