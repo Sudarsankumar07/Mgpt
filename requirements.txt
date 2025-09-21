@@ -11,4 +11,5 @@ pydantic
 huggingface_hub
 streamlit-chromadb-connection
 uuid
+rich
 huggingface_hub[hf_xet]
