@@ -8,12 +8,15 @@ from groq import Groq
 
 load_dotenv()
 
-# ChromaDB setup
+# ChromaDB setup using streamlit-chromadb-connection
 configuration = {
-    "client_type": "Client"  # In-memory client, no SQLite
+    "client": "PersistentClient",
+    "path": os.getenv("VECTOR_DB_DIR", "./vector_db")  # Added path
 }
 conn = st.connection("chromadb", type=ChromadbConnection, **configuration)
-chroma_client = conn._instance  # Get the underlying chromadb.Client
+chroma_client = conn._instance
+
+# Rest of rag.py unchanged
 
 # Groq setup
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
