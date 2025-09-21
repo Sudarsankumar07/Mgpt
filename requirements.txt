@@ -8,5 +8,6 @@ torch==2.0.1
 chromadb==0.4.24
 groq==0.9.0
 pydantic==2.5.0
+huggingface_hub==0.8.1
 uuid
 huggingface_hub[hf_xet]
