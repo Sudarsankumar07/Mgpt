@@ -9,6 +9,9 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
+# Create directory for ChromaDB PersistentClient
+RUN mkdir -p ./vector_db
+
 # Copy your code
 COPY . .
 
